@@ -4,8 +4,16 @@
   "private": true,
   "description": "鱼快下班 · 陪你熬到下班的大肥鱼倒计时小窗",
   "main": "electron/main.cjs",
-  "author": "XiaBan",
+  "author": "getpar",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getpar/yukuaixiaban.git"
+  },
+  "homepage": "https://github.com/getpar/yukuaixiaban#readme",
+  "bugs": {
+    "url": "https://github.com/getpar/yukuaixiaban/issues"
+  },
   "scripts": {
     "start": "electron .",
     "test": "node --test \"tests/*.mjs\"",
