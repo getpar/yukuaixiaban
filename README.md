@@ -178,7 +178,8 @@ import * as MascotModule from './mascot.js';   // 由 './pet.js' 改为 './masco
 - **桌宠动画素材** `assets/pet/all/*.webm`（96 个大肥鱼动画）：
   **CC BY-NC-SA 4.0**（署名 · 非商业性使用 · 相同方式共享），来自
   [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)，**不得商业使用**，
-  衍生作品须以相同协议公开并保留署名。详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+  衍生作品须以相同协议公开并保留署名。详见 [LICENSE-ASSETS.md](LICENSE-ASSETS.md)
+  与 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 
 > 简言之：**代码随便用（含商用），但那套鱼动画只能个人非商业用**。若要商用，
 > 请改用仓库内原创 SVG 鱼（无第三方素材依赖）：把 `src/app.js` 顶部 import 从
