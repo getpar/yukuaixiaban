@@ -26,7 +26,6 @@ const SRC_DIR = path.join(__dirname, '..', 'src');
 
 /** @type {BrowserWindow|null} */
 let runnerWin = null;
-let rafTimer = null;
 let byeTimer = null;
 let readyTimer = null;
 let runToken = 0;
@@ -114,10 +113,6 @@ function cleanupWindow() {
   if (readyTimer) {
     clearTimeout(readyTimer);
     readyTimer = null;
-  }
-  if (rafTimer) {
-    clearTimeout(rafTimer);
-    rafTimer = null;
   }
   if (byeTimer) {
     clearTimeout(byeTimer);

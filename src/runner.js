@@ -141,8 +141,6 @@ function tickFrame(now) {
   if (stopped || !plan) return;
   const elapsed = now - startTime;
   const clamped = Math.min(elapsed, plan.durationMs);
-  // 诊断用：统计实际渲染帧数（不影响功能）
-  window.__runnerFrames = (window.__runnerFrames || 0) + 1;
 
   // 1) 位置：用 plan 里“绝对屏幕坐标”的关键帧，减去窗口原点（原点恒为 area.x/area.y，这里直接当作 0 偏移的窗内坐标）
   const pos = boundsAt(plan.keyframes, clamped);
