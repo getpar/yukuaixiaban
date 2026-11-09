@@ -1,0 +1,145 @@
+/* ==========================================================================
+   鱼快下班 · 下班跑步彩蛋覆盖窗（v3 · 丝滑版）
+   窗一次性铺满工作区并静止；鱼在窗内用 transform: translate3d 移动（GPU 合成）。
+   素材来自社区项目 dsh-pet，CC BY-NC-SA 4.0，详见 THIRD-PARTY-NOTICES.md
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 整窗透明容器（静止，不参与移动） */
+.runner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.45s ease;
+}
+
+.runner.is-bye {
+  opacity: 0;
+}
+
+/* “鱼 + 头顶气泡”作为一个整体被 translate3d 移动；尺寸由 JS 按计划设定 */
+.fish {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 320px;
+  will-change: transform;
+  transform: translate3d(-9999px, -9999px, 0);
+  transition: none;
+}
+
+/* 大肥鱼本体：透明 webm，铺满容器、脚底贴容器底部 */
+.pet {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 12px rgba(11, 18, 36, 0.32));
+}
+
+/* 源素材 a012 朝左；向右跑时镜像翻转（只翻视频，不翻气泡） */
+.pet.is-mirror {
+  transform: scaleX(-1);
+}
+
+/* 收尾原地小跳（镜像时叠加 scaleX(-1) 版本） */
+.pet.is-hop {
+  animation: pet-hop 0.52s ease-in-out;
+}
+.pet.is-hop.is-mirror {
+  animation: pet-hop-mirror 0.52s ease-in-out;
+}
+
+@keyframes pet-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-16%) scale(1.03, 0.97);
+  }
+  70% {
+    transform: translateY(-4%) scale(0.98, 1.02);
+  }
+}
+@keyframes pet-hop-mirror {
+  0%,
+  100% {
+    transform: scaleX(-1) translateY(0);
+  }
+  40% {
+    transform: scaleX(-1) translateY(-16%) scale(1.03, 0.97);
+  }
+  70% {
+    transform: scaleX(-1) translateY(-4%) scale(0.98, 1.02);
+  }
+}
+
+/* 头顶气泡：相对“鱼容器”定位在顶部，多行自适应、绝不裁切 */
+.bubble {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 12px);
+  width: auto;
+  padding: 7px 12px;
+  border-radius: 13px;
+  background: rgba(12, 20, 40, 0.94);
+  color: #eaf6ff;
+  font: 600 14px/1.4 'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(125, 227, 244, 0.38);
+  opacity: 1;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  z-index: 2;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(12, 20, 40, 0.94);
+}
+
+.bubble.is-swap {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px) scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet {
+    filter: none;
+  }
+}

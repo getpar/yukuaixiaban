@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>下班啦</title>
+    <link rel="stylesheet" href="runner.css" />
+  </head>
+  <body>
+    <div class="runner" id="runner" aria-hidden="true">
+      <div class="fish" id="fish">
+        <div class="bubble" id="bubble" hidden></div>
+        <video class="pet" id="pet" muted playsinline autoplay loop preload="auto"></video>
+      </div>
+    </div>
+    <script type="module" src="runner.js"></script>
+  </body>
+</html>

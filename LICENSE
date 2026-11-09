@@ -1,0 +1,36 @@
+MIT License
+
+Copyright (c) 2026 getpar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+注意 / NOTICE
+================
+
+本 MIT 许可证仅覆盖本项目原创的**源代码**（`electron/`、`src/`、`tests/`、`tools/`
+下的脚本等，以及由本项目自行绘制的图标与原创 SVG 素材）。
+
+项目中 `assets/pet/all/*.webm`（共 96 个大肥鱼桌宠动画）来自社区项目
+https://github.com/PC2005-cloud/dsh-pet ，以
+**CC BY-NC-SA 4.0（署名 · 非商业性使用 · 相同方式共享）** 授权发布，
+**不在本 MIT 许可证覆盖范围内**。使用、修改或再分发这些动画的衍生作品，
+必须遵守 CC BY-NC-SA 4.0 的全部条款（尤其「禁止商业使用」与「相同方式共享」），
+并保留署名与来源。详见仓库根目录的 THIRD-PARTY-NOTICES.md。

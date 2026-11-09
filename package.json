@@ -1,0 +1,49 @@
+{
+  "name": "yukuaixiaban",
+  "version": "1.1.1",
+  "private": true,
+  "description": "鱼快下班 · 陪你熬到下班的大肥鱼倒计时小窗",
+  "main": "electron/main.cjs",
+  "author": "XiaBan",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test \"tests/*.mjs\"",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.local.yukuaixiaban",
+    "productName": "鱼快下班",
+    "artifactName": "YuKuaiXiaBan-${version}-portable.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "assets/pet/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "portable": {
+      "artifactName": "YuKuaiXiaBan-${version}-portable.${ext}"
+    }
+  }
+}

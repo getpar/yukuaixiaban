@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: xb-media:; media-src 'self' xb-media:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>鱼快下班</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="mascot.css" />
+    <link rel="stylesheet" href="pet.css" />
+  </head>
+  <body data-phase="working">
+    <div class="window" id="app">
+      <div class="aurora" aria-hidden="true"></div>
+
+      <header class="titlebar" id="titlebar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 28 20" width="22" height="16" focusable="false">
+              <path
+                d="M2 10c2.6-4.4 6.8-6.4 10.8-6.4 3.2 0 6 1.3 7.7 3.6.6.8 1.2 1.8 1.6 2.8-.4 1-.9 2-1.6 2.8-1.7 2.3-4.5 3.6-7.7 3.6C8.8 16.4 4.6 14.4 2 10Z"
+                fill="currentColor"
+              />
+              <path
+                d="M22.6 10c1.6-1 3-2.4 3.4-4 .6 2.6.3 5.4 0 8-.4-1.6-1.8-3-3.4-4Z"
+                fill="currentColor"
+                opacity=".75"
+              />
+              <circle cx="9.2" cy="8.6" r="1.5" fill="#0B1224" />
+            </svg>
+          </span>
+          <span class="brand-text">鱼快下班</span>
+        </div>
+
+        <div class="status" id="status-pill" data-phase="working">在岗摸鱼中</div>
+
+        <div class="actions">
+          <button class="icon-btn boss" id="btn-boss" type="button" title="老板键：一键隐藏（Ctrl+Shift+B）" aria-label="老板键，一键隐藏窗口">
+            <svg viewBox="0 0 16 16" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1.8 6.3 8 2.2l6.2 4.1" />
+              <path d="M3.2 6.6v6.4h9.6V6.6" />
+              <path d="M6.6 13V9.4h2.8V13" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="btn-pin" type="button" title="始终置顶" aria-pressed="true" aria-label="始终置顶">
+            <svg viewBox="0 0 16 16" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="5.1" r="2.9" />
+              <path d="M8 8v6.2" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="btn-settings" type="button" title="设置（Ctrl+,）" aria-label="设置">
+            <svg viewBox="0 0 16 16" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <circle cx="8" cy="8" r="2.3" />
+              <path d="M8 1.6v1.9M8 12.5v1.9M1.6 8h1.9M12.5 8h1.9M3.5 3.5l1.3 1.3M11.2 11.2l1.3 1.3M12.5 3.5l-1.3 1.3M4.8 11.2l-1.3 1.3" />
+            </svg>
+          </button>
+          <button class="icon-btn" id="btn-minimize" type="button" title="最小化" aria-label="最小化">
+            <svg viewBox="0 0 16 16" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <path d="M3.6 8.2h8.8" />
+            </svg>
+          </button>
+          <button class="icon-btn danger" id="btn-close" type="button" title="退出" aria-label="退出应用">
+            <svg viewBox="0 0 16 16" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <path d="M4.2 4.2l7.6 7.6M11.8 4.2l-7.6 7.6" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="stage">
+        <section class="mascot-zone">
+          <div id="mascot" aria-hidden="true"></div>
+          <p class="bubble" id="bubble">&nbsp;</p>
+        </section>
+
+        <section class="clock-zone">
+          <div class="countdown-zone">
+            <div class="countdown" id="countdown">--:--:--</div>
+            <div class="countdown-label" id="countdown-label">距离下班</div>
+          </div>
+
+          <div class="progress-zone">
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-fill"></div>
+              <div class="progress-shine" id="progress-shine" aria-hidden="true"></div>
+            </div>
+            <div class="progress-meta">
+              <span id="progress-text">今天已过 0%</span>
+              <span id="shift-text">09:00 – 18:00</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="money-zone">
+          <div class="money money-main">
+            <div class="money-label">今日已赚</div>
+            <div class="money-value"><span class="money-unit">¥</span><span id="earned">--</span></div>
+          </div>
+          <div class="money money-sub">
+            <div class="money-label">每分钟</div>
+            <div class="money-value small"><span class="money-unit">¥</span><span id="per-minute">--</span></div>
+          </div>
+          <div class="money money-sub">
+            <div class="money-label">还能赚</div>
+            <div class="money-value small"><span class="money-unit">¥</span><span id="remaining">--</span></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="shift-info">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="footer-shift">09:00 上班 · 18:00 下班</span>
+        </div>
+        <button class="text-btn" id="btn-open-settings" type="button">改设置</button>
+      </footer>
+
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+      <div class="scrim" id="scrim" hidden></div>
+
+      <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" hidden>
+        <div class="panel-head">
+          <h2 id="panel-title">设置</h2>
+          <button class="icon-btn" id="btn-panel-close" type="button" title="关闭" aria-label="关闭设置">
+            <svg viewBox="0 0 16 16" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <path d="M4.2 4.2l7.6 7.6M11.8 4.2l-7.6 7.6" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="设置分组">
+          <button class="tab is-active" id="tab-settings" type="button" role="tab" aria-selected="true" aria-controls="panel-settings">设置</button>
+          <button class="tab" id="tab-history" type="button" role="tab" aria-selected="false" aria-controls="panel-history">记录</button>
+        </div>
+
+        <div class="panel-body" id="panel-settings">
+          <div class="field">
+            <span class="field-label">计薪方式</span>
+            <div class="segmented" id="salary-type" role="group" aria-label="计薪方式">
+              <button class="seg is-active" type="button" data-type="monthly" aria-pressed="true">月薪</button>
+              <button class="seg" type="button" data-type="hourly" aria-pressed="false">时薪</button>
+            </div>
+          </div>
+
+          <label class="field" for="input-salary" id="field-salary">
+            <span class="field-label">月薪（元）</span>
+            <input id="input-salary" type="number" inputmode="decimal" min="0" step="100" placeholder="例如 12000" autocomplete="off" />
+            <span class="field-error" id="err-salary"></span>
+          </label>
+
+          <label class="field" for="input-workdays" id="field-workdays">
+            <span class="field-label">每月计薪天数</span>
+            <input id="input-workdays" type="number" inputmode="decimal" min="1" max="31" step="0.25" value="21.75" autocomplete="off" />
+            <span class="field-error" id="err-workdays"></span>
+          </label>
+
+          <label class="field" for="input-hourly" id="field-hourly" hidden>
+            <span class="field-label">时薪（元/小时）</span>
+            <input id="input-hourly" type="number" inputmode="decimal" min="0" step="10" placeholder="例如 60" autocomplete="off" />
+            <span class="field-error" id="err-hourly"></span>
+          </label>
+
+          <div class="field-row">
+            <label class="field" for="input-start">
+              <span class="field-label">上班时间</span>
+              <input id="input-start" type="time" value="09:00" />
+              <span class="field-error" id="err-start"></span>
+            </label>
+            <label class="field" for="input-end">
+              <span class="field-label">下班时间</span>
+              <input id="input-end" type="time" value="18:00" />
+              <span class="field-error" id="err-end"></span>
+            </label>
+          </div>
+
+          <label class="switch-row" for="input-lunch">
+            <input id="input-lunch" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">午休不计薪</span>
+          </label>
+
+          <div class="field-row" id="lunch-times" hidden>
+            <label class="field" for="input-lunch-start">
+              <span class="field-label">午休开始</span>
+              <input id="input-lunch-start" type="time" value="12:00" />
+              <span class="field-error" id="err-lunch-start"></span>
+            </label>
+            <label class="field" for="input-lunch-end">
+              <span class="field-label">午休结束</span>
+              <input id="input-lunch-end" type="time" value="13:00" />
+              <span class="field-error" id="err-lunch-end"></span>
+            </label>
+          </div>
+
+          <p class="section-label">提醒</p>
+          <label class="switch-row" for="input-notify">
+            <input id="input-notify" type="checkbox" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">下班时弹系统通知</span>
+          </label>
+          <label class="switch-row" for="input-sound">
+            <input id="input-sound" type="checkbox" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">下班时播放提示音</span>
+          </label>
+
+          <p class="section-label">行为</p>
+          <label class="switch-row" for="input-ontop">
+            <input id="input-ontop" type="checkbox" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">窗口始终置顶</span>
+          </label>
+          <label class="switch-row" for="input-reduce-motion">
+            <input id="input-reduce-motion" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">降低动态效果（大肥鱼只保留静帧）</span>
+          </label>
+          <label class="switch-row" for="input-autolaunch">
+            <input id="input-autolaunch" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">开机自动启动</span>
+          </label>
+          <label class="switch-row" for="input-desktop-run">
+            <input id="input-desktop-run" type="checkbox" checked />
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="switch-text">下班时大肥鱼跑到桌面上撒欢（彩蛋）</span>
+          </label>
+          <div class="field" id="field-desktop-run-mode">
+            <span class="field-label">彩蛋节奏</span>
+            <div class="segmented" id="desktop-run-mode" role="group" aria-label="彩蛋节奏">
+              <button class="seg" type="button" data-mode="calm" aria-pressed="false">安静</button>
+              <button class="seg is-active" type="button" data-mode="active" aria-pressed="true">活跃</button>
+            </div>
+          </div>
+
+          <p class="section-label">形象</p>
+          <div class="mascot-row">
+            <span class="mascot-name" id="custom-mascot-name">内置桌宠</span>
+            <button class="btn ghost small" id="btn-pick-mascot" type="button">选择图片/视频</button>
+            <button class="btn ghost small" id="btn-clear-mascot" type="button" hidden>恢复内置</button>
+          </div>
+
+          <div class="preview" id="preview">日薪 ¥-- · 每分钟 ¥--</div>
+          <p class="hint">工资与时间只保存在本机，不联网、不上传。</p>
+
+          <div class="panel-note">
+            <span>Ctrl + , 打开设置 · Esc 关闭</span>
+            <span id="app-version"></span>
+          </div>
+          <p class="panel-credit">大肥鱼形象来自社区项目 dsh-pet · CC BY-NC-SA 4.0 · 仅供个人非商业使用</p>
+        </div>
+
+        <div class="panel-body" id="panel-history" hidden>
+          <div class="history-summary" id="history-summary">最近 7 天：--</div>
+          <ul class="history-list" id="history-list"></ul>
+          <p class="hint">每天下班后自动记一笔，只保存在本机。</p>
+        </div>
+
+        <div class="panel-foot">
+          <button class="btn ghost" id="btn-reset" type="button">恢复默认</button>
+          <div class="spacer"></div>
+          <button class="btn ghost" id="btn-cancel" type="button">取消</button>
+          <button class="btn primary" id="btn-save" type="button">保存</button>
+        </div>
+
+        <p class="form-error" id="form-error" hidden></p>
+      </aside>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

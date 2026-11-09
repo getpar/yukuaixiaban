@@ -1,0 +1,1562 @@
+/* ==========================================================================
+   鱼快下班 · 大肥鱼 mascot.css
+   --------------------------------------------------------------------------
+   · 所有选择器都写在 #mascot 作用域下，不会影响页面其他元素。
+   · 表情 / 姿态 / 动效全部由根元素 data-state 驱动，颜色走 CSS 变量。
+   · 动画只用 transform / opacity；不使用 will-change。
+   · data-reduce-motion="true" 或系统 prefers-reduced-motion 时关闭动态，
+     只保留静态姿态与表情（每个状态都写好了静态 transform 兜底）。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 主题变量（都带兜底值，外部可覆盖）
+   -------------------------------------------------------------------------- */
+#mascot {
+  --fish-body-top: #93e4ff;
+  --fish-body-mid: #4d6bfe;
+  --fish-body-deep: #26359b;
+  --fish-belly: #f7fcff;
+  --fish-belly-warm: #cfe6ff;
+  --fish-line: #16204b;
+  --fish-eye: #0f1b44;
+  --fish-eye-shine: #ffffff;
+  --fish-blush: #ff9bb8;
+  --fish-fin: #5a76ff;
+  --fish-fin-far: #3d51c4;
+  --fish-fin-line: #1d2a72;
+  --fish-hi: #eafbff;
+  --fish-spark: #b4f4ff;
+  --fish-glow: #7de3f4;
+  --fish-ghost: #dff1ff;
+  --fish-sweat: #c4f0ff;
+  --fish-tongue: #ff8fa8;
+  --fish-zzz: #bfe9ff;
+  --fish-confetti-1: #7de3f4;
+  --fish-confetti-2: #ffb86b;
+  --fish-confetti-3: #a9b8ff;
+  --fish-confetti-4: #ffffff;
+
+  position: relative;
+  overflow: visible;
+}
+
+/* --------------------------------------------------------------------------
+   2. 画布
+   -------------------------------------------------------------------------- */
+#mascot .fish {
+  display: block;
+  width: 100%;
+  height: 148px;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 统一的 transform 参考框：以元素自身包围盒为准，旋转/缩放的锚点才可控 */
+#mascot .fish__scene,
+#mascot .fish__act,
+#mascot .fish__tail,
+#mascot .fish__tail-act,
+#mascot .fish__body,
+#mascot .fish__fin,
+#mascot .fish__eyeball,
+#mascot .fish__blink,
+#mascot .fish__eye-shine,
+#mascot .fish__zzz-glyph,
+#mascot .fish__spray-dot,
+#mascot .fish__sparkle,
+#mascot .fish__bubble,
+#mascot .fish__confetti-piece,
+#mascot .fish__ghost,
+#mascot .fish__shadow,
+#mascot .fish__scale,
+#mascot .fish__sweat,
+#mascot .fish__idle-bubble,
+#mascot .fish__speed-line,
+#mascot .fish__burst-dot,
+#mascot .fish__heart,
+#mascot .fish__watch {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* 整鱼以「脚底」为锚点，压扁时不会浮空 */
+#mascot .fish__scene {
+  transform-origin: 50% 88%;
+}
+
+/* 待机小动作的宿主：同样以脚底为锚点 */
+#mascot .fish__act {
+  transform-origin: 50% 88%;
+}
+
+/* 伸懒腰时身体往上抻 */
+#mascot .fish__body {
+  transform-origin: 50% 92%;
+}
+
+/* 尾巴从根部摆 */
+#mascot .fish__tail {
+  transform-origin: 100% 50%;
+}
+
+/* 待机甩尾：内层再摆一次，和状态摆尾叠加不打架 */
+#mascot .fish__tail-act {
+  transform-origin: 100% 50%;
+}
+
+/* 鱼鳍从根部扇动 */
+#mascot .fish__fin {
+  transform-origin: 50% 6%;
+}
+
+#mascot .fish__fin--far {
+  transform-origin: 50% 6%;
+}
+
+/* 视线跟随：只改自定义属性，眼球与身体轻微偏移 */
+#mascot .fish__look {
+  transform: translate(calc(var(--look-x, 0) * 3.2px), calc(var(--look-y, 0) * 2.4px));
+}
+
+#mascot .fish__eye {
+  transform: translate(calc(var(--look-x, 0) * 4.2px), calc(var(--look-y, 0) * 3.4px));
+}
+
+/* --------------------------------------------------------------------------
+   3. 上色（渐变 stop 也走 CSS 变量，方便整体换肤）
+   -------------------------------------------------------------------------- */
+#mascot .fish-stop-top {
+  stop-color: var(--fish-body-top, #93e4ff);
+}
+#mascot .fish-stop-mid {
+  stop-color: var(--fish-body-mid, #4d6bfe);
+}
+#mascot .fish-stop-deep {
+  stop-color: var(--fish-body-deep, #26359b);
+}
+#mascot .fish-stop-belly-top {
+  stop-color: var(--fish-belly, #f7fcff);
+}
+#mascot .fish-stop-belly-bottom {
+  stop-color: var(--fish-belly-warm, #cfe6ff);
+}
+#mascot .fish-stop-tail-top {
+  stop-color: var(--fish-body-mid, #4d6bfe);
+}
+#mascot .fish-stop-tail-bottom {
+  stop-color: var(--fish-body-deep, #26359b);
+}
+#mascot .fish-stop-gloss {
+  stop-color: var(--fish-hi, #eafbff);
+  stop-opacity: 0.9;
+}
+#mascot .fish-stop-gloss-out {
+  stop-color: var(--fish-hi, #eafbff);
+  stop-opacity: 0;
+}
+#mascot .fish-stop-aura {
+  stop-color: var(--fish-glow, #7de3f4);
+  stop-opacity: 0.55;
+}
+#mascot .fish-stop-aura-out {
+  stop-color: var(--fish-glow, #7de3f4);
+  stop-opacity: 0;
+}
+
+#mascot .fish__body-shape {
+  stroke: var(--fish-line, #16204b);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+#mascot .fish__tail-shape {
+  stroke: var(--fish-line, #16204b);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+#mascot .fish__tail-shine {
+  fill: none;
+  stroke: var(--fish-hi, #eafbff);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  opacity: 0.3;
+}
+
+#mascot .fish__belly {
+  opacity: 0.97;
+}
+
+#mascot .fish__gloss {
+  opacity: 0.6;
+}
+
+#mascot .fish__rim {
+  fill: none;
+  stroke: var(--fish-hi, #eafbff);
+  stroke-width: 4.2;
+  stroke-linecap: round;
+  opacity: 0.45;
+}
+
+#mascot .fish__fin path:not(.fish__fin-shine) {
+  fill: var(--fish-fin, #5a76ff);
+  fill-opacity: 0.95;
+  stroke: var(--fish-fin-line, #1d2a72);
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+}
+
+#mascot .fish__fin-shine {
+  fill: none;
+  stroke: var(--fish-hi, #eafbff);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.38;
+}
+
+#mascot .fish__fin--far path {
+  fill: var(--fish-fin-far, #4560cc);
+  fill-opacity: 0.9;
+  stroke-opacity: 0.75;
+}
+
+#mascot .fish__blowhole {
+  fill: var(--fish-line, #16204b);
+  fill-opacity: 0.5;
+}
+
+#mascot .fish__blowhole-in {
+  fill: var(--fish-belly, #f7fcff);
+  fill-opacity: 0.75;
+}
+
+#mascot .fish__blush {
+  fill: var(--fish-blush, #ff9bb8);
+  opacity: 0.34;
+}
+
+#mascot .fish__scale {
+  fill: var(--fish-hi, #eafbff);
+  fill-opacity: 0.55;
+  opacity: 0;
+}
+
+#mascot .fish__eye-ball {
+  fill: var(--fish-eye, #0f1b44);
+}
+
+#mascot .fish__eye-shine {
+  fill: var(--fish-eye-shine, #ffffff);
+  opacity: 0.95;
+}
+
+#mascot .fish__eye-spark {
+  fill: var(--fish-eye-shine, #ffffff);
+  opacity: 0.9;
+}
+
+#mascot .fish__eye-arc,
+#mascot .fish__eye-brow {
+  fill: none;
+  stroke: var(--fish-line, #16204b);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+#mascot .fish__mouth {
+  fill: none;
+  stroke: var(--fish-line, #16204b);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+#mascot .fish__mouth--open {
+  fill: var(--fish-line, #16204b);
+  stroke: none;
+}
+
+#mascot .fish__tongue {
+  fill: var(--fish-tongue, #ff8fa8);
+  opacity: 0;
+}
+
+#mascot .fish__zzz-glyph {
+  fill: none;
+  stroke: var(--fish-zzz, #bfe9ff);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#mascot .fish__ghost-shape {
+  fill: var(--fish-ghost, #dff1ff);
+  fill-opacity: 0.5;
+}
+
+#mascot .fish__ghost-eye {
+  fill: var(--fish-line, #16204b);
+  fill-opacity: 0.5;
+}
+
+#mascot .fish__bubble {
+  fill: none;
+  stroke: var(--fish-glow, #7de3f4);
+  stroke-width: 2;
+}
+
+#mascot .fish__sparkle {
+  fill: var(--fish-spark, #b4f4ff);
+}
+
+#mascot .fish__spray-dot {
+  fill: var(--fish-spark, #b4f4ff);
+}
+
+#mascot .fish__confetti-piece--c1 {
+  fill: var(--fish-confetti-1, #7de3f4);
+}
+#mascot .fish__confetti-piece--c2 {
+  fill: var(--fish-confetti-2, #ffb86b);
+}
+#mascot .fish__confetti-piece--c3 {
+  fill: var(--fish-confetti-3, #a9b8ff);
+}
+#mascot .fish__confetti-piece--c4 {
+  fill: var(--fish-confetti-4, #ffffff);
+}
+
+#mascot .fish__aura {
+  opacity: 0.16;
+}
+
+#mascot .fish__shadow {
+  fill: #050a1f;
+  opacity: 0.32;
+}
+
+/* 汗滴 / 待机泡泡 / 速度线 / 被戳粒子 / 小手表 */
+#mascot .fish__sweat {
+  fill: var(--fish-sweat, #c4f0ff);
+  fill-opacity: 0.9;
+}
+
+#mascot .fish__idle-bubble {
+  fill: none;
+  stroke: var(--fish-glow, #7de3f4);
+  stroke-width: 2;
+}
+
+#mascot .fish__speed-line {
+  fill: none;
+  stroke: var(--fish-spark, #b4f4ff);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+#mascot .fish__burst-dot {
+  fill: var(--fish-spark, #b4f4ff);
+}
+
+#mascot .fish__heart {
+  fill: var(--fish-blush, #ff9bb8);
+  fill-opacity: 0.95;
+}
+
+#mascot .fish__burst-unit:nth-child(2n) .fish__burst-dot {
+  fill: var(--fish-blush, #ff9bb8);
+}
+
+#mascot .fish__burst-unit:nth-child(3n) .fish__burst-dot {
+  fill: var(--fish-confetti-2, #ffb86b);
+}
+
+#mascot .fish__watch-face {
+  fill: var(--fish-belly, #f7fcff);
+  stroke: var(--fish-line, #16204b);
+  stroke-width: 2.2;
+}
+
+#mascot .fish__watch-hand {
+  fill: none;
+  stroke: var(--fish-line, #16204b);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+#mascot .fish__mouth--yawn {
+  fill: var(--fish-line, #16204b);
+  stroke: none;
+}
+
+/* --------------------------------------------------------------------------
+   4. 默认隐藏的「表情零件 / 粒子」（由状态规则点亮）
+   -------------------------------------------------------------------------- */
+#mascot .fish__mouth,
+#mascot .fish__eye-arc,
+#mascot .fish__eye-brow,
+#mascot .fish__tongue,
+#mascot .fish__zzz-glyph,
+#mascot .fish__ghost,
+#mascot .fish__sparkle,
+#mascot .fish__bubble,
+#mascot .fish__spray-dot,
+#mascot .fish__confetti-piece,
+#mascot .fish__sweat,
+#mascot .fish__idle-bubble,
+#mascot .fish__speed-line,
+#mascot .fish__burst-dot,
+#mascot .fish__heart,
+#mascot .fish__watch {
+  opacity: 0;
+}
+
+/* 默认表情：微笑 */
+#mascot .fish__mouth--smile {
+  opacity: 1;
+}
+
+/* 表情切换时轻微淡入淡出（只有 opacity，符合性能约束） */
+#mascot .fish__mouth,
+#mascot .fish__eye-arc,
+#mascot .fish__eye-brow,
+#mascot .fish__tongue,
+#mascot .fish__eye-shine,
+#mascot .fish__blush,
+#mascot .fish__scale {
+  transition: opacity 0.24s ease;
+}
+
+#mascot .fish__eyeball {
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+/* 粒子错峰：默认无延迟，具体成员在各自状态下用 --d 覆盖 */
+#mascot .fish__zzz-glyph,
+#mascot .fish__sparkle,
+#mascot .fish__bubble,
+#mascot .fish__spray-dot,
+#mascot .fish__confetti-piece,
+#mascot .fish__scale {
+  --d: 0s;
+}
+
+/* --------------------------------------------------------------------------
+   5. 七档情绪
+   -------------------------------------------------------------------------- */
+
+/* —— sleep 沉睡鱼：蜷缩、闭眼、缓慢呼吸、Zzz —— */
+#mascot .fish[data-state='sleep'] {
+  --fish-body-top: #8fdaf2;
+  --fish-body-mid: #4a63e8;
+  --fish-body-deep: #24318c;
+}
+#mascot .fish[data-state='sleep'] .fish__scene {
+  transform: translateY(9px) scale(0.94) rotate(-4deg);
+  animation: fish-breathe 5.8s ease-in-out infinite;
+}
+#mascot .fish[data-state='sleep'] .fish__tail {
+  transform: rotate(10deg);
+}
+#mascot .fish[data-state='sleep'] .fish__eyeball {
+  opacity: 0;
+}
+#mascot .fish[data-state='sleep'] .fish__eye-arc--sleep {
+  opacity: 1;
+}
+#mascot .fish[data-state='sleep'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='sleep'] .fish__mouth--flat {
+  opacity: 1;
+}
+#mascot .fish[data-state='sleep'] .fish__blush {
+  opacity: 0.24;
+}
+#mascot .fish[data-state='sleep'] .fish__zzz-glyph {
+  opacity: 1;
+  animation: fish-zzz 4.2s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='sleep'] .fish__zzz > g:nth-child(2) .fish__zzz-glyph {
+  --d: 0.5s;
+}
+#mascot .fish[data-state='sleep'] .fish__zzz > g:nth-child(3) .fish__zzz-glyph {
+  --d: 1s;
+}
+
+/* —— slouch 鱼饼瘫：摊平、半睁眼、尾巴偶尔无力摆一下 —— */
+#mascot .fish[data-state='slouch'] {
+  --fish-body-top: #8acfe8;
+  --fish-body-mid: #4861dc;
+  --fish-body-deep: #27339a;
+}
+#mascot .fish[data-state='slouch'] .fish__scene {
+  transform: translateY(15px) scale(1.13, 0.76);
+  animation: fish-slouch-breathe 6.6s ease-in-out infinite;
+}
+#mascot .fish[data-state='slouch'] .fish__tail {
+  transform: rotate(-2deg);
+  animation: fish-tail-flick 5.6s ease-in-out infinite;
+}
+#mascot .fish[data-state='slouch'] .fish__eyeball {
+  transform: translateY(3px) scaleY(0.5);
+}
+#mascot .fish[data-state='slouch'] .fish__eye-shine {
+  opacity: 0.3;
+}
+#mascot .fish[data-state='slouch'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='slouch'] .fish__mouth--frown {
+  opacity: 1;
+}
+#mascot .fish[data-state='slouch'] .fish__blush {
+  opacity: 0.14;
+}
+
+/* —— soulless 灵魂出窍：空洞发灰、慢速眨眼、轻微晃动 —— */
+#mascot .fish[data-state='soulless'] {
+  --fish-body-top: #86c7de;
+  --fish-body-mid: #5468c8;
+  --fish-body-deep: #2c3680;
+  --fish-eye: #5a6480;
+  --fish-blush: #c8a3b0;
+}
+#mascot .fish[data-state='soulless'] .fish__scene {
+  transform: translateY(3px) rotate(-1.2deg);
+  animation: fish-soulless-sway 4.6s ease-in-out infinite;
+}
+#mascot .fish[data-state='soulless'] .fish__tail {
+  transform: rotate(-3deg);
+}
+#mascot .fish[data-state='soulless'] .fish__sweat {
+  opacity: 0.85;
+  animation: fish-sweat 2.9s ease-in var(--d, 0s) infinite;
+}
+#mascot .fish__sweats > g:nth-child(2) .fish__sweat {
+  --d: 1.2s;
+}
+#mascot .fish[data-state='soulless'] .fish__eye-shine {
+  opacity: 0.12;
+}
+#mascot .fish[data-state='soulless'] .fish__eye-spark {
+  opacity: 0.12;
+}
+#mascot .fish[data-state='soulless'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='soulless'] .fish__mouth--flat {
+  opacity: 1;
+}
+#mascot .fish[data-state='soulless'] .fish__blush {
+  opacity: 0.1;
+}
+#mascot .fish[data-state='soulless'] .fish__ghost {
+  opacity: 0.5;
+  animation: fish-ghost-drift 5.2s ease-in-out infinite;
+}
+
+/* —— reviving 逐渐回魂：睁眼有神、嘴角上扬、尾巴有节奏摆 —— */
+#mascot .fish[data-state='reviving'] .fish__scene {
+  transform: translateY(0);
+  animation: fish-idle 3.8s ease-in-out infinite;
+}
+#mascot .fish[data-state='reviving'] .fish__tail {
+  transform: rotate(0deg);
+  animation: fish-tail-sway 2.4s ease-in-out infinite;
+}
+#mascot .fish[data-state='reviving'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='reviving'] .fish__mouth--smile {
+  opacity: 1;
+}
+#mascot .fish[data-state='reviving'] .fish__blush {
+  opacity: 0.32;
+}
+
+/* —— hopeful 眼里有光：眼睛发亮、轻弹跳、气泡与星光 —— */
+#mascot .fish[data-state='hopeful'] {
+  --fish-body-top: #a2ebff;
+  --fish-body-mid: #5473ff;
+}
+#mascot .fish[data-state='hopeful'] .fish__scene {
+  transform: translateY(0);
+  animation: fish-hop 2s cubic-bezier(0.36, 1.4, 0.62, 1) infinite;
+}
+#mascot .fish[data-state='hopeful'] .fish__tail {
+  transform: rotate(0deg);
+  animation: fish-tail-happy 1.8s ease-in-out infinite;
+}
+#mascot .fish[data-state='hopeful'] .fish__eyeball {
+  transform: scale(1.07);
+}
+#mascot .fish[data-state='hopeful'] .fish__eye-shine {
+  opacity: 1;
+  animation: fish-shine 2.1s ease-in-out infinite;
+}
+#mascot .fish[data-state='hopeful'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='hopeful'] .fish__mouth--grin {
+  opacity: 1;
+}
+#mascot .fish[data-state='hopeful'] .fish__blush {
+  opacity: 0.5;
+}
+#mascot .fish[data-state='hopeful'] .fish__bubble {
+  opacity: 0.55;
+  animation: fish-bubble 3.6s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='hopeful'] .fish__sparkle {
+  opacity: 0.95;
+  animation: fish-twinkle 2.4s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='hopeful'] .fish__spray-dot {
+  opacity: 0.85;
+  animation: fish-spray 2.8s ease-out var(--d) infinite;
+}
+
+/* —— sprint 归心似箭：高频小跳、尾巴快摆、鳞片高光 —— */
+#mascot .fish[data-state='sprint'] {
+  --fish-body-top: #b4f2ff;
+  --fish-body-mid: #4d6bfe;
+  --fish-body-deep: #22308f;
+}
+#mascot .fish[data-state='sprint'] .fish__scene {
+  transform: translateY(0);
+  animation: fish-sprint-hop 0.62s cubic-bezier(0.32, 1.4, 0.5, 1) infinite;
+}
+#mascot .fish[data-state='sprint'] .fish__tail {
+  transform: rotate(0deg);
+  animation: fish-tail-fast 0.7s ease-in-out infinite;
+}
+#mascot .fish[data-state='sprint'] .fish__eyeball {
+  transform: scaleY(0.88);
+}
+#mascot .fish[data-state='sprint'] .fish__eye-brow {
+  opacity: 1;
+}
+#mascot .fish[data-state='sprint'] .fish__eye-shine {
+  opacity: 1;
+}
+#mascot .fish[data-state='sprint'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='sprint'] .fish__mouth--grin {
+  opacity: 1;
+}
+#mascot .fish[data-state='sprint'] .fish__blush {
+  opacity: 0.55;
+}
+#mascot .fish[data-state='sprint'] .fish__scale {
+  opacity: 0.8;
+  animation: fish-scale-shine 1.15s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='sprint'] .fish__sparkle {
+  opacity: 0.9;
+  animation: fish-twinkle 1.2s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='sprint'] .fish__spray-dot {
+  opacity: 0.9;
+  animation: fish-spray 1.6s ease-out var(--d) infinite;
+}
+#mascot .fish[data-state='sprint'] .fish__fin--near {
+  animation: fish-fin-flap 0.62s ease-in-out infinite;
+}
+#mascot .fish[data-state='sprint'] .fish__speed-line {
+  opacity: 0.75;
+  animation: fish-speed 0.55s ease-out var(--d, 0s) infinite;
+}
+#mascot .fish__speed > .fish__speed-line:nth-child(2) {
+  --d: 0.16s;
+}
+#mascot .fish__speed > .fish__speed-line:nth-child(3) {
+  --d: 0.32s;
+}
+
+/* —— celebrate 下班撒花：跃起、笑脸、彩纸与气泡 —— */
+#mascot .fish[data-state='celebrate'] {
+  --fish-body-top: #b9f4ff;
+  --fish-body-mid: #5170ff;
+  --fish-body-deep: #22308f;
+  --fish-blush: #ffb488;
+}
+#mascot .fish[data-state='celebrate'] .fish__scene {
+  transform: translateY(0);
+  animation: fish-celebrate-jump 2.6s cubic-bezier(0.35, 1.3, 0.5, 1) infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__tail {
+  transform: rotate(0deg);
+  animation: fish-tail-party 1.05s ease-in-out infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__eyeball {
+  opacity: 0;
+}
+#mascot .fish[data-state='celebrate'] .fish__eye-arc--happy {
+  opacity: 1;
+}
+#mascot .fish[data-state='celebrate'] .fish__mouth {
+  opacity: 0;
+}
+#mascot .fish[data-state='celebrate'] .fish__mouth--open {
+  opacity: 1;
+}
+#mascot .fish[data-state='celebrate'] .fish__tongue {
+  opacity: 1;
+}
+#mascot .fish[data-state='celebrate'] .fish__blush {
+  opacity: 0.62;
+}
+#mascot .fish[data-state='celebrate'] .fish__aura {
+  opacity: 0.34;
+}
+#mascot .fish[data-state='celebrate'] .fish__confetti-piece {
+  opacity: 0.92;
+  animation: fish-confetti 2.8s linear var(--d) infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__bubble {
+  opacity: 0.6;
+  animation: fish-bubble 4s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__sparkle {
+  opacity: 1;
+  animation: fish-twinkle 1.8s ease-in-out var(--d) infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__spray-dot {
+  opacity: 0.9;
+  animation: fish-spray 2s ease-out var(--d) infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__shadow {
+  animation: fish-shadow 2.6s ease-in-out infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__fin--near {
+  animation: fish-fin-flap 0.9s ease-in-out infinite;
+}
+#mascot .fish[data-state='celebrate'] .fish__fin--far {
+  animation: fish-fin-flap 0.9s ease-in-out 0.28s infinite;
+}
+
+/* 相邻档位的光晕浓度，顺手做出「越来越有精神」的层次 */
+#mascot .fish[data-state='hopeful'] .fish__aura,
+#mascot .fish[data-state='sprint'] .fish__aura {
+  opacity: 0.28;
+}
+#mascot .fish[data-state='soulless'] .fish__aura {
+  opacity: 0.1;
+}
+
+/* --------------------------------------------------------------------------
+   6. 粒子错峰（只写自定义属性，不动 animation 声明）
+   -------------------------------------------------------------------------- */
+#mascot .fish__bubbles > .fish__bubble:nth-child(2) {
+  --d: 0.45s;
+}
+#mascot .fish__bubbles > .fish__bubble:nth-child(3) {
+  --d: 0.9s;
+}
+#mascot .fish__bubbles > .fish__bubble:nth-child(4) {
+  --d: 1.35s;
+}
+#mascot .fish__bubbles > .fish__bubble:nth-child(5) {
+  --d: 1.8s;
+}
+#mascot .fish__bubbles > .fish__bubble:nth-child(6) {
+  --d: 2.25s;
+}
+
+#mascot .fish__sparkles > g:nth-child(2) .fish__sparkle {
+  --d: 0.5s;
+}
+#mascot .fish__sparkles > g:nth-child(3) .fish__sparkle {
+  --d: 1s;
+}
+#mascot .fish__sparkles > g:nth-child(4) .fish__sparkle {
+  --d: 1.5s;
+}
+#mascot .fish__sparkles > g:nth-child(5) .fish__sparkle {
+  --d: 1.9s;
+}
+
+#mascot .fish__spray > .fish__spray-dot:nth-child(2) {
+  --d: 0.5s;
+}
+#mascot .fish__spray > .fish__spray-dot:nth-child(3) {
+  --d: 1s;
+}
+#mascot .fish__spray > .fish__spray-dot:nth-child(4) {
+  --d: 1.4s;
+}
+
+#mascot .fish__confetti > g:nth-child(2) .fish__confetti-piece {
+  --d: 0.24s;
+}
+#mascot .fish__confetti > g:nth-child(3) .fish__confetti-piece {
+  --d: 0.48s;
+}
+#mascot .fish__confetti > g:nth-child(4) .fish__confetti-piece {
+  --d: 0.72s;
+}
+#mascot .fish__confetti > g:nth-child(5) .fish__confetti-piece {
+  --d: 0.96s;
+}
+#mascot .fish__confetti > g:nth-child(6) .fish__confetti-piece {
+  --d: 1.2s;
+}
+#mascot .fish__confetti > g:nth-child(7) .fish__confetti-piece {
+  --d: 1.44s;
+}
+#mascot .fish__confetti > g:nth-child(8) .fish__confetti-piece {
+  --d: 1.68s;
+}
+#mascot .fish__confetti > g:nth-child(9) .fish__confetti-piece {
+  --d: 1.92s;
+}
+#mascot .fish__confetti > g:nth-child(10) .fish__confetti-piece {
+  --d: 2.16s;
+}
+#mascot .fish__confetti > g:nth-child(11) .fish__confetti-piece {
+  --d: 2.4s;
+}
+
+#mascot .fish__scale-wrap:nth-of-type(2) .fish__scale {
+  --d: 0.32s;
+}
+#mascot .fish__scale-wrap:nth-of-type(3) .fish__scale {
+  --d: 0.64s;
+}
+
+/* --------------------------------------------------------------------------
+   7. 交互与待机动作（class 由 mascot.js 随机调度挂载，同一时刻只会挂一个）
+   -------------------------------------------------------------------------- */
+
+/* 随机眨眼：只压扁 blink 这一层，不覆盖各状态自己的眼睛姿态 */
+#mascot .fish.is-blinking .fish__blink {
+  animation: fish-blink 0.32s ease-in-out;
+}
+
+/* 打哈欠：张嘴、眯眼、身体往上抻 */
+#mascot .fish.is-yawn .fish__act {
+  animation: fish-yawn 2s ease-in-out;
+}
+#mascot .fish.is-yawn .fish__blink {
+  animation: fish-yawn-eyes 2s ease-in-out;
+}
+#mascot .fish.is-yawn .fish__mouth,
+#mascot .fish.is-yawn .fish__tongue {
+  opacity: 0;
+}
+#mascot .fish.is-yawn .fish__mouth--yawn,
+#mascot .fish.is-yawn .fish__tongue--yawn {
+  opacity: 1;
+}
+
+/* 左右张望 */
+#mascot .fish.is-look-around .fish__act {
+  animation: fish-look-around 2.6s ease-in-out;
+}
+
+/* 伸懒腰 */
+#mascot .fish.is-stretch .fish__body {
+  animation: fish-stretch 2.2s ease-in-out;
+}
+
+/* 甩尾巴 */
+#mascot .fish.is-tail-flick .fish__tail-act {
+  animation: fish-tail-flick-act 1.5s ease-in-out;
+}
+
+/* 吐泡泡串 */
+#mascot .fish.is-bubble-string .fish__idle-bubble {
+  animation: fish-idle-bubble 2.4s ease-out var(--d, 0s) infinite;
+}
+#mascot .fish__idle-bubbles > .fish__idle-bubble:nth-child(2) {
+  --d: 0.35s;
+}
+#mascot .fish__idle-bubbles > .fish__idle-bubble:nth-child(3) {
+  --d: 0.7s;
+}
+#mascot .fish__idle-bubbles > .fish__idle-bubble:nth-child(4) {
+  --d: 1.05s;
+}
+
+/* 看表：抬起胸鳍，腕上的小表盘亮出来 */
+#mascot .fish.is-check-watch .fish__act {
+  animation: fish-check-watch 2.2s ease-in-out;
+}
+#mascot .fish.is-check-watch .fish__fin--near {
+  animation: fish-fin-lift 2.2s ease-in-out;
+}
+#mascot .fish.is-check-watch .fish__watch {
+  opacity: 1;
+  animation: fish-watch-pop 2.2s ease-in-out;
+}
+
+/* 被戳：挤压回弹 */
+#mascot .fish.is-poke .fish__act {
+  animation: fish-poke 1.2s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+#mascot .fish.is-poke .fish__burst-dot {
+  animation: fish-burst 0.95s ease-out var(--d, 0s);
+}
+#mascot .fish.is-poke .fish__heart {
+  opacity: 1;
+  animation: fish-heart 1.15s ease-out var(--d, 0s);
+}
+#mascot .fish.is-poke[data-state='sprint'] .fish__act {
+  animation: fish-poke-hop 1.2s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+#mascot .fish.is-poke[data-state='celebrate'] .fish__act {
+  animation: fish-poke-hop 1.2s cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+#mascot .fish.is-poke[data-state='sleep'] .fish__act {
+  animation: fish-poke-startle 1.2s ease-out;
+}
+/* 睡觉被戳：眼睛猛地睁开一下，Zzz 被打断 */
+#mascot .fish.is-poke[data-state='sleep'] .fish__eyeball {
+  animation: fish-wake 1.2s ease-in-out;
+}
+#mascot .fish.is-poke[data-state='sleep'] .fish__zzz-glyph {
+  animation: none;
+  opacity: 0.15;
+}
+
+/* 被戳粒子的方向 / 错峰（挂在外层 g 上，子元素继承自定义属性） */
+#mascot .fish__burst-unit:nth-child(1) {
+  --bx: 0px;
+  --by: -16px;
+  --d: 0s;
+}
+#mascot .fish__burst-unit:nth-child(2) {
+  --bx: 14px;
+  --by: -10px;
+  --d: 0.04s;
+}
+#mascot .fish__burst-unit:nth-child(3) {
+  --bx: 16px;
+  --by: 0px;
+  --d: 0.08s;
+}
+#mascot .fish__burst-unit:nth-child(4) {
+  --bx: 12px;
+  --by: 14px;
+  --d: 0.12s;
+}
+#mascot .fish__burst-unit:nth-child(5) {
+  --bx: 0px;
+  --by: 16px;
+  --d: 0.16s;
+}
+#mascot .fish__burst-unit:nth-child(6) {
+  --bx: -12px;
+  --by: 14px;
+  --d: 0.2s;
+}
+#mascot .fish__burst-unit:nth-child(7) {
+  --bx: -16px;
+  --by: 0px;
+  --d: 0.24s;
+}
+#mascot .fish__burst-unit:nth-child(8) {
+  --bx: -14px;
+  --by: -10px;
+  --d: 0.28s;
+}
+
+#mascot .fish__hearts > g:nth-child(2) .fish__heart {
+  --d: 0.12s;
+}
+
+/* 页面不可见时暂停所有动画（省电，也不丢当前帧） */
+#mascot .fish.is-paused,
+#mascot .fish.is-paused * {
+  animation-play-state: paused !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. 关键帧（只改 transform / opacity）
+   -------------------------------------------------------------------------- */
+@keyframes fish-breathe {
+  0%,
+  100% {
+    transform: translateY(9px) scale(0.94) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(6px) scale(0.97) rotate(-4.6deg);
+  }
+}
+
+@keyframes fish-slouch-breathe {
+  0%,
+  100% {
+    transform: translateY(15px) scale(1.13, 0.76);
+  }
+  50% {
+    transform: translateY(13px) scale(1.145, 0.785);
+  }
+}
+
+@keyframes fish-soulless-sway {
+  0%,
+  100% {
+    transform: translateY(3px) translateX(-1.5px) rotate(-1.6deg);
+  }
+  50% {
+    transform: translateY(1px) translateX(1.5px) rotate(1.6deg);
+  }
+}
+
+@keyframes fish-idle {
+  0%,
+  100% {
+    transform: translateY(1px) scale(1);
+  }
+  50% {
+    transform: translateY(-1px) scale(1.008);
+  }
+}
+
+@keyframes fish-hop {
+  0%,
+  100% {
+    transform: translateY(1px) scaleY(0.995);
+  }
+  30% {
+    transform: translateY(-8px) scaleY(1.015);
+  }
+  55% {
+    transform: translateY(-3px) scaleY(1);
+  }
+}
+
+@keyframes fish-sprint-hop {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(0.975) rotate(-1deg);
+  }
+  45% {
+    transform: translateY(-9px) scaleY(1.03) rotate(1.4deg);
+  }
+  70% {
+    transform: translateY(-5px) scaleY(1.01) rotate(0.6deg);
+  }
+}
+
+@keyframes fish-celebrate-jump {
+  0%,
+  8% {
+    transform: translateY(0) scale(1);
+  }
+  18% {
+    transform: translateY(3px) scale(1.05, 0.94);
+  }
+  36% {
+    transform: translateY(-22px) scale(0.96, 1.06) rotate(-3deg);
+  }
+  54% {
+    transform: translateY(0) scale(1.03, 0.97) rotate(1deg);
+  }
+  68% {
+    transform: translateY(-11px) scale(0.99, 1.02) rotate(-1deg);
+  }
+  84%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fish-tail-flick {
+  0%,
+  52%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  62% {
+    transform: rotate(-12deg);
+  }
+  74% {
+    transform: rotate(4deg);
+  }
+  86% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes fish-tail-sway {
+  0%,
+  100% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes fish-tail-happy {
+  0%,
+  100% {
+    transform: rotate(-11deg);
+  }
+  50% {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes fish-tail-fast {
+  0%,
+  100% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(13deg);
+  }
+}
+
+@keyframes fish-tail-party {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes fish-shine {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes fish-scale-shine {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes fish-zzz {
+  0% {
+    transform: translate(0, 4px) scale(0.85);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate(4px, -12px) scale(1.05);
+    opacity: 0;
+  }
+}
+
+@keyframes fish-ghost-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+    opacity: 0.34;
+  }
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+    opacity: 0.58;
+  }
+}
+
+@keyframes fish-bubble {
+  0% {
+    transform: translateY(4px) scale(0.7);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-16px) scale(1.05);
+    opacity: 0;
+  }
+}
+
+@keyframes fish-twinkle {
+  0%,
+  100% {
+    transform: scale(0.55) rotate(0deg);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.05) rotate(14deg);
+    opacity: 1;
+  }
+}
+
+@keyframes fish-spray {
+  0% {
+    transform: translateY(6px) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-12px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes fish-confetti {
+  0% {
+    transform: translateY(-12px) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(74px) rotate(200deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fish-fin-flap {
+  0%,
+  100% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes fish-shadow {
+  0%,
+  8%,
+  54%,
+  84%,
+  100% {
+    transform: scale(1);
+    opacity: 0.32;
+  }
+  36% {
+    transform: scale(0.82);
+    opacity: 0.18;
+  }
+  68% {
+    transform: scale(0.9);
+    opacity: 0.24;
+  }
+}
+
+/* ---- 交互 / 待机小动作的关键帧 ---- */
+@keyframes fish-blink {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  45%,
+  55% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes fish-yawn {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  22% {
+    transform: translateY(3px) scale(1.03, 0.95);
+  }
+  55% {
+    transform: translateY(-6px) scale(0.95, 1.07);
+  }
+  78% {
+    transform: translateY(0) scale(1.02, 0.98);
+  }
+}
+
+@keyframes fish-yawn-eyes {
+  0%,
+  12%,
+  88%,
+  100% {
+    transform: scaleY(1);
+  }
+  38%,
+  70% {
+    transform: scaleY(0.16);
+  }
+}
+
+@keyframes fish-look-around {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  18%,
+  38% {
+    transform: translateX(-6px) rotate(-3.5deg);
+  }
+  58%,
+  80% {
+    transform: translateX(6px) rotate(3.5deg);
+  }
+}
+
+@keyframes fish-stretch {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  30% {
+    transform: translateY(-7px) scale(0.96, 1.07);
+  }
+  55% {
+    transform: translateY(-3px) scale(1.01, 1.03);
+  }
+  78% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@keyframes fish-tail-flick-act {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  18% {
+    transform: rotate(-20deg);
+  }
+  36% {
+    transform: rotate(15deg);
+  }
+  54% {
+    transform: rotate(-11deg);
+  }
+  72% {
+    transform: rotate(7deg);
+  }
+  88% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes fish-idle-bubble {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  22% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(7px, -26px) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes fish-check-watch {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  20%,
+  75% {
+    transform: translateY(2px) rotate(3.2deg);
+  }
+}
+
+@keyframes fish-fin-lift {
+  0%,
+  100% {
+    transform: rotate(-8deg);
+  }
+  20%,
+  75% {
+    transform: rotate(22deg);
+  }
+}
+
+@keyframes fish-watch-pop {
+  0%,
+  12% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  26%,
+  74% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes fish-poke {
+  0% {
+    transform: scale(1, 1) translateY(0);
+  }
+  12% {
+    transform: scale(1.14, 0.84) translateY(7px);
+  }
+  32% {
+    transform: scale(0.92, 1.1) translateY(-8px);
+  }
+  52% {
+    transform: scale(1.05, 0.96) translateY(1px);
+  }
+  72% {
+    transform: scale(0.98, 1.02) translateY(-2px);
+  }
+  88% {
+    transform: scale(1.01, 0.99) translateY(0);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+
+@keyframes fish-poke-hop {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  14% {
+    transform: translateY(4px) scale(1.1, 0.88);
+  }
+  40% {
+    transform: translateY(-16px) scale(0.96, 1.05);
+  }
+  62% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+  78% {
+    transform: translateY(-6px) scale(0.99, 1.01);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@keyframes fish-poke-startle {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  12% {
+    transform: translateY(-7px) scale(1.04, 0.96);
+  }
+  30% {
+    transform: translateY(2px) scale(0.99, 1.01);
+  }
+  55%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@keyframes fish-burst {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--bx, 0px), var(--by, 0px)) scale(1.1);
+  }
+}
+
+@keyframes fish-heart {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-22px) scale(1.1);
+  }
+}
+
+@keyframes fish-wake {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scaleY(0.6);
+  }
+  12%,
+  62% {
+    opacity: 1;
+    transform: scaleY(1.06);
+  }
+  82% {
+    opacity: 0.6;
+    transform: scaleY(0.86);
+  }
+}
+
+@keyframes fish-sweat {
+  0% {
+    opacity: 0;
+    transform: translateY(-3px) scale(0.7);
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(9px) scale(1);
+  }
+}
+
+@keyframes fish-speed {
+  0% {
+    opacity: 0;
+    transform: translateX(7px) scaleX(0.4);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-9px) scaleX(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. 降低动态效果：只留表情与颜色，所有位移动画归零
+   -------------------------------------------------------------------------- */
+#mascot[data-reduce-motion='true'] :is(.fish, .fish *),
+#mascot :is(.fish[data-reduce-motion='true'], .fish[data-reduce-motion='true'] *) {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #mascot .fish,
+  #mascot .fish * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

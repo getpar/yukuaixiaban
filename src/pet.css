@@ -1,0 +1,81 @@
+/* ==========================================================================
+   鱼快下班 · 桌宠版大肥鱼（webm 动画）
+   素材来自社区项目 dsh-pet，CC BY-NC-SA 4.0，详见 THIRD-PARTY-NOTICES.md
+   视频本身带 VP9 alpha 通道（640×360），直接叠在深色背景上即可。
+   ========================================================================== */
+
+#mascot {
+  overflow: visible;
+}
+
+#mascot .pet {
+  position: relative;
+  width: 100%;
+  height: 238px;
+  overflow: hidden;
+}
+
+#mascot .pet__layer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-50%)
+    translate3d(calc(var(--look-x, 0) * 8px), calc(var(--look-y, 0) * 5px), 0);
+  object-fit: cover;
+  object-position: 50% 60%;
+  opacity: 0;
+  transition: opacity 0.09s linear;
+  pointer-events: none;
+  /* 不要给视频加 drop-shadow：带 alpha 的视频在移动时会被滤镜拖出模糊重影 */
+}
+
+#mascot .pet__layer.is-active {
+  opacity: 1;
+}
+
+#mascot .pet__layer--action {
+  z-index: 2;
+  transition: opacity 0.06s linear;
+}
+
+/* 播一次性动作时，把基础情绪层立刻藏掉并暂停，避免两套姿势叠加出重影 */
+#mascot .pet.is-action .pet__layer:not(.pet__layer--action) {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+/* 降低动态效果：只保留当前帧 */
+#mascot .pet.is-static .pet__layer {
+  transition: none;
+}
+
+/* 角色背后的柔光，让她不像“贴在”背景上 */
+#mascot .pet::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 78%;
+  height: 82%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(77, 107, 254, 0.22), rgba(125, 227, 244, 0.06) 62%, rgba(77, 107, 254, 0));
+  pointer-events: none;
+}
+
+/* 用户自定义形象（图片或视频），盖在内置桌宠之上 */
+#mascot .pet__custom {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 3;
+  pointer-events: none;
+}
+
+#mascot .pet.has-custom .pet__layer {
+  opacity: 0 !important;
+}
