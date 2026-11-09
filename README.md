@@ -4,6 +4,16 @@
 
 ![主界面](docs/screenshots/main.png)
 
+## 下载 / Download
+
+**Windows x64 便携版（免安装）**：[前往 Releases 下载](https://github.com/getpar/yukuaixiaban/releases/latest)
+
+- `YuKuaiXiaBan-1.1.1-portable.exe` — 单文件便携版，双击即用
+- `YuKuaiXiaBan-1.1.1.zip` — 便携版 + 使用说明 + 第三方素材声明
+
+> 首次运行 Windows 可能提示「未知发布者」（未做代码签名）→「更多信息」→「仍要运行」。
+> 配置保存在 `%APPDATA%\鱼快下班\`。
+
 ## 功能
 
 - **下班倒计时**：时:分:秒，按真实时间每 250ms 重算，不做累加，睡眠唤醒后不会漂移。
